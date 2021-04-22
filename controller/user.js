@@ -1,10 +1,17 @@
 const faker = require('faker')
 
+const {invalidBody} = require('../error/invalidBody')
 const models = require('../models/user')
 
 
 const loginUser = async(req, res, next) => {
+    const { email, password } = req.body
     try{
+        if (!email || !password) {
+            console.log('invalid body')
+            throw new invalidBody("Email and password")
+        }
+
         const token = await models.loginUser(req.body)
         res.json(token)
     } catch(err){
@@ -34,7 +41,7 @@ const changePassword = async(req, res, next) => {
 
 const generateUserProfile = async(req, res, next) => {
     
-    res.send({
+    res.json({
         name: faker.name.findName(),
         address: {
             city: faker.address.city(),

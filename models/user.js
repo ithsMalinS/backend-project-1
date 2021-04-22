@@ -1,11 +1,14 @@
-const jwt = require('jsonwebtoken')
 const db = require('../database/connection')
+const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
+const {userNotFound, wrongPassword} = require('../error/user')
 
 function loginUser ({email, password}) {
     return new Promise((resolve, reject) => {
         db.get(`SELECT password FROM users WHERE email = ?`, [email], function(err, row){
-            if(err) {
+            if(row == undefined){
+                reject(new userNotFound(email))
+            } else if(err) {
                 reject(err)
             } else {
                 if(bcrypt.compareSync(password, row.password)) {
@@ -13,8 +16,8 @@ function loginUser ({email, password}) {
                     const token = jwt.sign(payload, process.env.JWT_SECRET)
                     resolve({token})
                 } else {
-                    resolve({success: false, message: `Wrong password`})
-                } 
+                    reject(new wrongPassword())
+                }
             }
         })
     })

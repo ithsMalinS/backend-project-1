@@ -4,7 +4,6 @@ const userAuth = (req, res, next) => {
     try{
         const token = req.headers.authorization.replace('Bearer ', '')
         const data = jwt.verify(token, process.env.JWT_SECRET)
-        //console.log(data)
         req.user = data
         next()
     } catch(e){

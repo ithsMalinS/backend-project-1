@@ -2,7 +2,7 @@ const express = require('express')
 const routes = express.Router()
 const controller = require('../controller/user')
 const auth = require('../middleware/authorization')
-//const reqLimit = require('../middleware/reqLimit')
+const reqLimit = require('../middleware/reqLimit')
 
 
 // logga in
@@ -17,7 +17,7 @@ routes.get('/me', auth.userAuth, controller.getUser)
 routes.patch('/me', auth.userAuth, controller.changePassword)
 
 // generera ny användarprofil  OBS saknas personlig egenskap
-routes.get('/generate', auth.userAuth, controller.generateUserProfile)
+routes.get('/generate', auth.userAuth, reqLimit.userLimit, controller.generateUserProfile)
 
 
 module.exports = routes
