@@ -13,11 +13,23 @@ const loginUser = async(req, res, next) => {
 }
 
 const getUser = async(req, res, next) => {
-    res.send(req.user)
+    try{
+        const user = await models.getUser(req.user)
+        res.json(user)
+    } catch(err){
+        next(err)
+    }
 }
 
 const changePassword = async(req, res, next) => {
-    //byt lösenord
+    const email = req.user.email
+    const password = req.body.password
+    try{
+        const update = await models.changePassword(email, password)
+        res.json(update)
+    } catch(err){
+        next(err)
+    }
 }
 
 const generateUserProfile = async(req, res, next) => {

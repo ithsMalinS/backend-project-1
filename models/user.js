@@ -13,9 +13,25 @@ function loginUser ({email, password}) {
                     const token = jwt.sign(payload, process.env.JWT_SECRET)
                     resolve({token})
                 } else {
-                    // fel lösenord
+                    resolve({success: false, message: `Wrong password`})
                 } 
             }
+        })
+    })
+}
+
+function getUser ({email}) {
+    return new Promise((resolve, reject) => {
+        db.get(`SELECT email FROM users WHERE email = ?`, [email], function(err, row){
+            err ? reject(err) : resolve(row)
+        })
+    })
+}
+
+function changePassword (email, password) {
+    return new Promise((resolve, reject) => {
+        db.get(`UPDATE users SET password = ? WHERE email = ?`, [bcrypt.hashSync(password, 10), email], function(err){
+            err ? reject(err) : resolve({success: true, message: `Password updated`})
         })
     })
 }
@@ -24,4 +40,6 @@ function loginUser ({email, password}) {
 
 module.exports = {
     loginUser,
+    getUser,
+    changePassword
 }

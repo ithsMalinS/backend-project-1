@@ -13,4 +13,6 @@ const userAuth = (req, res, next) => {
 }
 
 
-module.exports = {userAuth}
+module.exports = {
+    userAuth,
+}

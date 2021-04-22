@@ -2,7 +2,7 @@ const express = require('express')
 const routes = express.Router()
 const controller = require('../controller/user')
 const auth = require('../middleware/authorization')
-
+//const reqLimit = require('../middleware/reqLimit')
 
 
 // logga in
