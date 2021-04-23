@@ -18,7 +18,7 @@ routes.patch('/me', auth.userAuth, controller.changePassword)
 
 // generera ny användarprofil  OBS saknas personlig egenskap
 routes.get('/generate', auth.userAuth, reqLimit.userLimit, controller.generateUserProfile)
-routes.get('/user/:base64data', auth.userAuth, reqLimit.userLimit, controller.generateUserProfileB64)
+routes.get('/user/:base64data', auth.userAuth, controller.generateUserProfileB64)
 
 
 module.exports = routes
