@@ -10,7 +10,7 @@ const userLimit = (req, res, next) => {
             if(err){
                 throw err
             } else if(row == undefined){
-                res.status(406).json({error: `User ${user} not found`})
+                res.status(401).json({error: `User ${user} not found`})
             } else {
                 if(row.timestamp == null || row.timestamp < (Date.now()-120000)) {
                     db.get(`UPDATE users SET counter = ?, timestamp = ? WHERE email = ?`, [3, Date.now(), user], function(err){
@@ -30,7 +30,7 @@ const userLimit = (req, res, next) => {
                             }
                         })
                     } else{
-                        res.status(406).json({error: `Requests for ${user} exceeded`})
+                        res.status(401).json({error: `Requests for ${user} exceeded`})
                     }
                 }
             }
