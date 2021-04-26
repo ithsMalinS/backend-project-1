@@ -1,7 +1,7 @@
 const db = require('../database/connection')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
-const {userNotFound, wrongPassword} = require('../error/user')
+const { userNotFound, wrongPassword } = require('../error/user')
 
 function loginUser ({email, password}) {
     return new Promise((resolve, reject) => {
@@ -23,6 +23,7 @@ function loginUser ({email, password}) {
     })
 }
 
+//user not found?
 function getUser ({email}) {
     return new Promise((resolve, reject) => {
         db.get(`SELECT email FROM users WHERE email = ?`, [email], function(err, row){
@@ -31,6 +32,7 @@ function getUser ({email}) {
     })
 }
 
+//same password? user not found??
 function changePassword (email, password) {
     return new Promise((resolve, reject) => {
         db.get(`UPDATE users SET password = ? WHERE email = ?`, [bcrypt.hashSync(password, 10), email], function(err){

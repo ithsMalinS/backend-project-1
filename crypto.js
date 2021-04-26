@@ -1,8 +1,8 @@
 const crypto = require('crypto')
 
 const algorithm = 'aes-256-ctr'
-const secretKey = 'vOVH6sdmpNWjRRIqCc7rdxs01lwHzfr3'
-//const secretKey = process.env.CRYPTO_KEY
+//const secretKey = 'vOVH6sdmpNWjRRIqCc7rdxs01lwHzfr3'
+const secretKey = process.env.CRYPTO_KEY
 const iv = crypto.randomBytes(16)
 
 const encrypt = (str) => {
@@ -15,6 +15,7 @@ const encrypt = (str) => {
 }
 
 const decrypt = (hash) => {
+    //console.log('Hash:    ' + hash)
     const decipher = crypto.createDecipheriv(algorithm, secretKey, Buffer.from(hash.iv, 'hex'))
     const decrpyted = Buffer.concat([decipher.update(Buffer.from(hash.content, 'hex')), decipher.final()])
     return decrpyted.toString()
