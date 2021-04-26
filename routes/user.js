@@ -5,18 +5,18 @@ const auth = require('../middleware/authorization')
 const reqLimit = require('../middleware/reqLimit')
 
 
-// logga in
+// log in user
 routes.post('/login', controller.loginUser)
 
 
-/**** kräver authorization ****/
-// hämta användaruppgifter
+/**** requires authorization ****/
+// get user
 routes.get('/me', auth.userAuth, controller.getUser)
 
-// ändra lösenord
+// change password
 routes.patch('/me', auth.userAuth, controller.changePassword)
 
-// generera ny användarprofil  OBS saknas personlig egenskap
+// genererate new profile
 routes.get('/generate', auth.userAuth, reqLimit.userLimit, controller.generateUserProfile)
 routes.get('/user/:base64data', auth.userAuth, controller.generateUserProfileB64)
 

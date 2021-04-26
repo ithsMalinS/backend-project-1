@@ -1,8 +1,9 @@
 const faker = require('faker')
 const crypto = require('crypto')
 const { encrypt, decrypt } = require('../crypto')
-const URLSafeBase64 = require('urlsafe-base64')
+//const URLSafeBase64 = require('urlsafe-base64')
 const { invalidBody } = require('../error/invalidBody')
+const { invalidPassword } = require('../error/user')
 const models = require('../models/user')
 
 
@@ -10,10 +11,8 @@ const loginUser = async(req, res, next) => {
     const { email, password } = req.body
     try{
         if (!email || !password) {
-            console.log('invalid body')
             throw new invalidBody("Email and password")
         }
-
         const token = await models.loginUser(req.body)
         res.json(token)
     } catch(err){
@@ -30,10 +29,14 @@ const getUser = async(req, res, next) => {
     }
 }
 
-//invalid body
 const changePassword = async(req, res, next) => {
     const email = req.user.email
     const password = req.body.password
+    if(!password){
+        throw new invalidBody('Password')
+    } else if(password.length < 5 || password.length > 10) {
+        throw new invalidPassword('Password must be 5-10 characters.')
+    }
     try{
         const update = await models.changePassword(email, password)
         res.json(update)
@@ -42,6 +45,7 @@ const changePassword = async(req, res, next) => {
     }
 }
 
+//faker does not work
 const generateUserProfile = async(req, res, next) => {
     const arr = ['my ' + faker.animal.dog(), 'my ' + faker.animal.cat(), 'my ' + faker.vehicle.vehicle(), faker.music.genre()]
     const obj = {
@@ -60,39 +64,27 @@ const generateUserProfile = async(req, res, next) => {
         personality: 'I love ' + arr[Math.floor(Math.random() * arr.length)],
     }
 
-    const base64data = Buffer.from(JSON.stringify(obj)).toString('base64')
-   let safeURL
-    crypto.randomBytes(32, function(err, buf) {
-        if (err) {
-        throw err
-    }
-    safeURL = URLSafeBase64.encode(base64data)
-    //console.log('safeURL   ' + safeURL)
-    //console.log(typeof(safeURL))
-    })
-    console.log('safeURL:   ' + safeURL)
-    const hash = encrypt(Buffer.from(base64data, 'utf8'))  //utf8
-    console.log('hash:   ' + hash)
-    //const text = decrypt(hash)
-    //console.log(text)
+    // Ett objekt (fake profile)
+    // objektet ska stringify:as
 
+    // den stringfy:ade objektet ska passas in i "encrypt" funcktionen
+    // encrypt funktionen kommer att returnera ett objekt => {iv: "xxxx": content: "xxxx"}
+    // det krypterade objektet ska stringify:as igen för att kunna passa in den i en ENDPOINT
+    
+    const hash = encrypt(JSON.stringify(obj))
+    const base64 = Buffer.from(JSON.stringify(hash)).toString('base64')
+    
     res.json({
         obj,
-        url: hash
+        url: base64
     })
 }
 
-//invalid url
+//invalid url??
 const generateUserProfileB64 = async(req, res, next) => {
-    const hash = req.params.base64data
-    //console.log(hash)
-    //console.log(typeof(hash))
-    const base64 = decrypt(hash)
-    const text = URLSafeBase64.decode(base64)
-    //console.log('Base64   ' + base64)
+    const base64 = req.params.base64data
     
-    //const buff = Buffer.from(text, 'base64');
-    const obj = JSON.parse(text)
+    const obj = JSON.parse(decrypt(base64));
 
     res.json({obj})
 }

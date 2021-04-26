@@ -15,7 +15,16 @@ class wrongPassword extends Error{
     }
 }
 
+class invalidPassword extends Error{
+    constructor(str){
+        super()
+        this.errorCode = 405
+        this.errorMessage = `New password not valid. ${str}`
+    }
+}
+
 module.exports = {
     userNotFound,
-    wrongPassword
+    wrongPassword,
+    invalidPassword
 }
