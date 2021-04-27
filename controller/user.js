@@ -1,6 +1,6 @@
 const faker = require('faker')
 const crypto = require('crypto')
-const { encrypt, decrypt } = require('../crypto')
+const { encrypt, decrypt } = require('../utils/crypto')
 const { invalidBody } = require('../error/invalidBody')
 const { invalidPassword } = require('../error/user')
 const models = require('../models/user')
@@ -35,8 +35,6 @@ const changePassword = async(req, res, next) => {
     try{
         if(!password){
             throw new invalidBody('Password')
-        } else if(password.length < 5 || password.length > 20) {
-            throw new invalidPassword('Password must be 5-20 characters.')
         }
         const update = await models.changePassword(email, password)
         res.json(update)

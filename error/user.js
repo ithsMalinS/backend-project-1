@@ -23,8 +23,19 @@ class invalidPassword extends Error{
     }
 }
 
+class requestsExceeded extends Error {
+    constructor(user){
+        super()
+        this.errorCode = 405
+        this.errorMessage = `Requests for ${user} exceeded`
+    }
+}
+
+
+
 module.exports = {
     userNotFound,
     wrongPassword,
-    invalidPassword
+    invalidPassword,
+    requestsExceeded
 }
