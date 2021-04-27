@@ -1,6 +1,7 @@
 const db = require('../database/connection')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
+const faker = require('faker')
 const { userNotFound, wrongPassword, invalidPassword, requestsExceeded } = require('../error/user')
 
 
@@ -24,7 +25,6 @@ function loginUser ({email, password}) {
     })
 }
 
-
 function getUser ({email}) {
     return new Promise((resolve, reject) => {
         db.get(`SELECT email FROM users WHERE email = ?`, [email], function(err, row){
@@ -38,7 +38,6 @@ function getUser ({email}) {
         })
     })
 }
-
 
 function changePassword (email, password) {
     if(password.length < 5 || password.length > 20) {
@@ -63,6 +62,25 @@ function changePassword (email, password) {
     })
 }
 
+function generateUserProfile () {
+        const arr = ['my ' + faker.animal.dog(), 'my ' + faker.animal.cat(), 'my ' + faker.vehicle.vehicle(), faker.music.genre()]
+        const obj = {
+            name: faker.name.findName(),
+            address: {
+                city: faker.address.city(),
+                street: faker.address.streetAddress(),
+                zip: faker.address.zipCode(),
+                state: faker.address.state(),
+                country: faker.address.country()
+                },
+            profession: faker.name.jobType(),
+            dob: `${faker.date.between('1971-01-01', '2003-01-01')}`.slice(0, 15),
+            hometown: faker.address.city(),
+            avatar: faker.image.avatar(),
+            personality: 'I love ' + arr[Math.floor(Math.random() * arr.length)],
+        }
+        return obj
+}
 
 function checkRequests (user) {
     const MILLISECONDS_IN_A_DAY = 60 * 60 * 24 * 1000
@@ -95,5 +113,6 @@ module.exports = {
     loginUser,
     getUser,
     changePassword,
+    generateUserProfile,
     checkRequests
 }
